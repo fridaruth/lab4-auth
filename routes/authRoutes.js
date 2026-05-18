@@ -16,7 +16,7 @@ router.post("/register", async (req, res) => {
 
         // validera input
         if (!username || !password) {
-            return res.status(400).json({ error: "Användarnamn och lösenord krävs!"});
+            return res.status(400).json({ error: "Användarnamn och lösenord krävs!" });
         }
 
         // skapa och spara användare
@@ -33,18 +33,18 @@ router.post("/register", async (req, res) => {
     }
 });
 
-router.post("/login", async(req, res) => {
+router.post("/login", async (req, res) => {
     try {
         const { username, password } = req.body;
 
         // kontrollera input
-        if (!username || !password ) {
+        if (!username || !password) {
             return res.status(400).json({ error: "Användarnamn och lösenord krävs" });
         }
 
         // kolla om användare finns
         const user = await User.findOne({ username });
-        if(!user) {
+        if (!user) {
             return res.status(401).json({ error: "Felaktigt användarnamn eller lösenord" });
         }
 
@@ -68,5 +68,30 @@ router.post("/login", async(req, res) => {
         res.status(500).json({ error: "Serverfel vid inloggning" });
     }
 });
+
+// protected route
+router.get("/protected", authenticateToken, (req, res) => {
+    res.json({ 
+        message: "Skyddad route!",
+        user: req.username 
+    });
+});
+
+// validate token
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (token == null) {
+        return res.status(401).json({ message: "Not authorized for this route - token missing! " });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
+        if (err) return res.status(403).json({ message: "incorrect JWT" });
+
+        req.username = user.username;
+        next()
+    })
+}
 
 module.exports = router;
