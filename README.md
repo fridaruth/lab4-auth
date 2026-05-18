@@ -2,6 +2,8 @@
 
 Detta är backend-delen av Laboration 4. Det är ett säkert REST-API för att hantera registrering, inloggning och token-baserad autentisering av användare. 
 
+## 🔗 [Länk till sidan](https://lab4-autentisering.netlify.app/)
+
 ## Funktioner
 * **Användarregistrering (`POST /api/register`):** Skapar en ny användare och hashar lösenordet med `bcrypt` innan det sparas. 
 * **Inloggning (`POST /api/login`):** Verifierar användaruppgifter och utfärdar en tidsbegränsad JWT-token.
